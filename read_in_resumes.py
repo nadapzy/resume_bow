@@ -16,14 +16,13 @@ folders=[os.path.join(path,folder_name) for folder_name in folder_names ]
 #par_folder=os.path.dirname(path)
 #abc()
 
-def read_mapping(folders):
+def read_mapping(path,folders):
     mapping=[]
-    for folder in folders:    
-        mapping.append(pd.read_csv(os.path.join(folder,'WALMART_ResumeTxt_Index.txt'),sep='|'))
+    mapping.append(pd.read_csv(os.path.join(path,'WALMART_JobApplications_Index.txt'),sep='|'))
     mapping=pd.concat(mapping)
     return mapping  
 
-mapping=read_mapping(folders)
+mapping=read_mapping(path,folders)
 
 # -----------------------------------1-------------------------------
 # import GRS file, the export from GRS system, please note that we resaved the file in standard csv format after dowloading
@@ -40,7 +39,6 @@ grs_front=grs_front[grs_front.job_family=='SM']
 mapping_grs=mapping.merge(grs_front,how='inner',left_on=['BRUID','AUTOREQ'],right_on=['bruid','req_id'])
 
 
-abc()
 # -----------------------------------2-------------------------------
 # import all resumes 
 import collections
@@ -52,9 +50,8 @@ def read_resume(folders):
         for f in listdir(folder):
             files[f]=folder[-1]
     return files
+    
 files=read_resume(folders)  
-
-
 
 file_name=mapping.RESUMEKEY.astype(str)
 file_name='R_'+file_name+'.txt'
@@ -63,12 +60,14 @@ set_file_from_map=set(file_name)
 set_dir_files=set(files.keys())
 set_read_files=set_file_from_map.intersection(set_dir_files)
 
+#abc()
+
 index=[]
 resume_raw=[]
 folder_pref=folder_names[0][:-1]
 for file in set_read_files:
     if len(index)%1000==0:
-        print('processing #',len(index),'resumes')
+        print('processing #',len(index),'out of',len(set_read_files),'resumes')
     file_path=os.path.join(path,folder_pref+files[file],file)
     with open(file_path,'r') as f:
         read_data=f.readlines()
@@ -86,7 +85,7 @@ vectorizer = TfidfVectorizer(analyzer = "word",   \
                              preprocessor = None, \
                              stop_words =None,\
                              max_features = None,\
-                             ngram_range=(1,2),min_df=5\
+                             ngram_range=(1,1),min_df=5\
                              ,decode_error='ignore',sublinear_tf=True)   
                              #potential set binary=True
                             #potentially set preprocessor to remove all numbers                              
