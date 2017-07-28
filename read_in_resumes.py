@@ -119,7 +119,7 @@ mapping_grs.set_index(['RESUMEKEY'],inplace=True)
 df_vocab_map=df_vocab.merge(mapping_grs,how='inner',left_index=True,right_index=True)
 
 import pyodbc
-cnxn=pyodbc.connect('DSN=GM2P;UID=zpeng;pwd=Force33')
+cnxn=pyodbc.connect('DSN=GM2P;UID=userid;pwd=pwd')
 
 sql='''
 SELECT 
